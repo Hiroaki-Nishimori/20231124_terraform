@@ -8,15 +8,8 @@ terraform {
   }
 
   required_version = ">= 1.2.0"
-
-  backend "s3" {
-    bucket = "terraform-study-bucket"
-    key = "study.tfstate"
-    region = "ap-northeast-1"
-  }
 }
 
 provider "aws" {
   region = "ap-northeast-1"
 }
-
