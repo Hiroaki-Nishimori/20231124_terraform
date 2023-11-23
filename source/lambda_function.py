@@ -33,4 +33,4 @@ def lambda_handler(event, context):
 def get_period_and_subject(event: str) -> tuple[str, str]:
     period = event.get("period", "week")
     subject = event.get("subject", f"AWS Cost Report ~{period}~")
-    return subject, period
+    return period, subject

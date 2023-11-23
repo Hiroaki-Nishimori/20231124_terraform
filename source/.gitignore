@@ -1,6 +1,6 @@
 venv
 .venv
-__pychace__/
+__pycache__/
 
 .env
 send_by_line.py
