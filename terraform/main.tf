@@ -37,7 +37,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "terraform" {
   }
 }
 
-### lambda関数を作成しよう
+### 問題① S3bucketにアップロードしてみよう
+resource "aws_s3_object" "lambda_function_zip" {
+  bucket = aws_s3_bucket.terraform.bucket
+  key    = "lambda/lambda_function.zip"
+  source = "${path.module}/source/lambda_function.zip" 
+}
+
+### 問題②lambda関数を作成しよう
 resource "aws_lambda_function" "lambda_function" {
   filename      = "${path.module}/source/lambda_function.zip"
   function_name = "notify_aws_cost"  # 任意の関数名に
@@ -48,13 +55,13 @@ resource "aws_lambda_function" "lambda_function" {
 
   environment {
     variables = {
-      REGION_NAME = "ap-northeast-1"
-      SET_ADDRESS = ""
+      REGION_NAME = "ap-northeast-1" # 自身のリージョンを設定
+      SET_ADDRESS = "" # 仕様したいemail_addressをセット
     }
   }
 }
 
-### 問題②lambdaの実行ロールを作成しよう
+### 問題③lambdaの実行ロールを作成しよう
 resource "aws_iam_role" "lambda_exec_role" {
   name = "lambda_exec_role"
 
@@ -74,14 +81,13 @@ resource "aws_iam_role" "lambda_exec_role" {
 EOF
 }
 
-### put
-resource "aws_s3_object" "lambda_function_zip" {
-  bucket = aws_s3_bucket.terraform.bucket
-  key    = "lambda/lambda_function.zip"
-  source = "${path.module}/source/lambda_function.zip" 
+### 問題③lambdaの実行ロールをアタッチしよう
+resource "aws_iam_role_policy_attachment" "lambda_ses_policy_attachment" {
+  policy_arn = aws_iam_policy.ses_policy.arn
+  role       = aws_iam_role.lambda_exec_role.name
 }
 
-### ses
+### 問題④ lambdaでsesを用いてemailを送信できるようなポリシーを作ろう
 resource "aws_iam_policy" "ses_policy" {
   name        = "ses_policy"
   description = "SES Policy for Lambda"
@@ -103,12 +109,13 @@ resource "aws_iam_policy" "ses_policy" {
 EOF
 }
 
+### 問題④ ポリシーをアタッチしよう
 resource "aws_iam_role_policy_attachment" "lambda_ses_policy_attachment" {
   policy_arn = aws_iam_policy.ses_policy.arn
   role       = aws_iam_role.lambda_exec_role.name
 }
 
-### cost
+### 問題⑤　コストExplorerにアクセスできるポリシーを作成しよう
 resource "aws_iam_policy" "ce_policy" {
   name        = "ce_policy"
   description = "Cost Explorer Policy for Lambda"
@@ -129,6 +136,7 @@ resource "aws_iam_policy" "ce_policy" {
 EOF
 }
 
+### 問題⑤　アタッチしよう
 resource "aws_iam_role_policy_attachment" "lambda_ce_policy_attachment" {
   policy_arn = aws_iam_policy.ce_policy.arn
   role       = aws_iam_role.lambda_exec_role.name
