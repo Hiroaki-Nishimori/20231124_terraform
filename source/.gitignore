@@ -1,0 +1,9 @@
+venv
+.venv
+__pychace__/
+
+.env
+send_by_line.py
+*.json
+!example.json
+debug*.py
