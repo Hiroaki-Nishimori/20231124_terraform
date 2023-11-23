@@ -15,5 +15,5 @@ example.jsonをコピペして自分用にアレンジする
 ### 3.2 env
 
 これはローカルで触ってみる用の方
-env/local/.envを作成し、example.envを
+env/local/.envを作成し、example.envを参照して値を作ってください
 
