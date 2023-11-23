@@ -81,12 +81,6 @@ resource "aws_iam_role" "lambda_exec_role" {
 EOF
 }
 
-### 問題③lambdaの実行ロールをアタッチしよう
-resource "aws_iam_role_policy_attachment" "lambda_ses_policy_attachment" {
-  policy_arn = aws_iam_policy.ses_policy.arn
-  role       = aws_iam_role.lambda_exec_role.name
-}
-
 ### 問題④ lambdaでsesを用いてemailを送信できるようなポリシーを作ろう
 resource "aws_iam_policy" "ses_policy" {
   name        = "ses_policy"
