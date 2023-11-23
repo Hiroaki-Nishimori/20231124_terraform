@@ -49,7 +49,7 @@ resource "aws_lambda_function" "lambda_function" {
   environment {
     variables = {
       REGION_NAME = "ap-northeast-1"
-      SET_ADDRESS = "hirohero876@gmail.com"
+      SET_ADDRESS = ""
     }
   }
 }
